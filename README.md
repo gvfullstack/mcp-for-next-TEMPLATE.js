@@ -17,13 +17,9 @@ Here are the exact steps for the maintainers to reproduce the error.
 
 Clone the repository:
 
-Bash
-
 git clone https://github.com/YOUR_USERNAME/mcp-for-next.js.git
 cd mcp-for-next.js
 Install dependencies:
-
-Bash
 
 pnpm install
 Set up environment variable:
@@ -33,13 +29,9 @@ OPENAI_API_KEY="sk-..."
 Start the server:
 In a terminal, run the development server:
 
-Bash
-
 pnpm dev
 Run the client script:
 In a second terminal, run the test script:
-
-Bash
 
 node scripts/reproduce-bug.mjs
 Observe the error:
