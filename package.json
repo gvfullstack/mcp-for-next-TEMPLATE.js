@@ -8,8 +8,13 @@
     "start": "next start"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "1.12.1",
     "@vercel/mcp-adapter": "0.8.2",
+    "ai": "3.1.9",
+    "axios": "1.7.2",
+    "dotenv": "16.4.5",
     "next": "15.2.4",
+    "openai": "4.47.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "redis": "^4.7.0",

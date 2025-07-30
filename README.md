@@ -1,25 +1,46 @@
-# Example Next.js MCP Server
+This repository demonstrates a critical bug in the vercel-labs/mcp-for-next.js template. After a fresh clone and installation, the server fails to process any tool invocation request, returning a 400 Bad Request with a JSON-RPC "Parse error."
 
-**Uses `@vercel/mcp-adapter`**
+The debugging process has confirmed the following:
 
+The error is not environment-specific, as it fails both locally (Windows/Node.js v20) and when deployed to Vercel.
 
-## Usage
+The error occurs with both transport methods: SSEClientTransport (to /sse) and StreamableHTTPClientTransport (to /mcp).
 
-This sample app uses the [Vercel MCP Adapter](https://www.npmjs.com/package/@vercel/mcp-adapter) that allows you to drop in an MCP server on a group of routes in any Next.js project.
+Basic MCP communication works (client.listTools() succeeds), but any tool invocation (client.request()) fails.
 
-Update `app/[transport]/route.ts` with your tools, prompts, and resources following the [MCP TypeScript SDK documentation](https://github.com/modelcontextprotocol/typescript-sdk/tree/main?tab=readme-ov-file#server).
+The error persists even when using the unmodified, pristine code from the template.
 
-## Notes for running on Vercel
+The error payload from the server ({"0":"e", ...}) suggests a fundamental serialization/deserialization bug within the @vercel/mcp-adapter, where it incorrectly processes the request payload.
 
-- To use the SSE transport, requires a Redis attached to the project under `process.env.REDIS_URL`
-- Make sure you have [Fluid compute](https://vercel.com/docs/functions/fluid-compute) enabled for efficient execution
-- After enabling Fluid compute, open `app/route.ts` and adjust `maxDuration` to 800 if you using a Vercel Pro or Enterprise account
-- [Deploy the Next.js MCP template](https://vercel.com/templates/next.js/model-context-protocol-mcp-with-next-js)
+Steps to Reproduce
+Here are the exact steps for the maintainers to reproduce the error.
 
-## Sample Client
+Clone the repository:
 
-`script/test-client.mjs` contains a sample client to try invocations.
+Bash
 
-```sh
-node scripts/test-client.mjs https://mcp-for-next-js.vercel.app
-```
+git clone https://github.com/YOUR_USERNAME/mcp-for-next.js.git
+cd mcp-for-next.js
+Install dependencies:
+
+Bash
+
+pnpm install
+Set up environment variable:
+Create a .env file in the project root and add your OpenAI API key:
+
+OPENAI_API_KEY="sk-..."
+Start the server:
+In a terminal, run the development server:
+
+Bash
+
+pnpm dev
+Run the client script:
+In a second terminal, run the test script:
+
+Bash
+
+node scripts/reproduce-bug.mjs
+Observe the error:
+The client script will connect and list the tools successfully, but the final client.request() will fail with the 400 Parse Error in the terminal.
